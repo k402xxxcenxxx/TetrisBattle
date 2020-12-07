@@ -205,15 +205,15 @@ class TetrisInterface(abc.ABC):
         # return self.tetris_list[self.now_player]["tetris"].get_grid().reshape(GRID_DEPTH, GRID_WIDTH, 1)
 
     def get_seen_grid(self):
-        self.ob_memory.pop(0)
+        #self.ob_memory.pop(0)
 
-        grid_1 = self._get_seen_grid()
-        self.ob_memory.append(grid_1)
+        #grid_1 = self._get_seen_grid()
+        #self.ob_memory.append(grid_1)
 
-        grid = np.concatenate(self.ob_memory, axis=0)
+        #grid = np.concatenate(self.ob_memory, axis=0)
 
-        return grid
-        # return self.tetris_list[self.now_player]["tetris"].get_grid().reshape(GRID_DEPTH, GRID_WIDTH, 1)
+        #return grid
+        return self.tetris_list[self.now_player]["tetris"].get_grid().reshape(GRID_DEPTH, GRID_WIDTH, 1)
 
     def _get_diff_grid(self):
         grid_1 = self.tetris_list[self.now_player]["tetris"].get_diff_grid()
