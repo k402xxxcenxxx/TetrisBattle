@@ -213,8 +213,8 @@ class TetrisInterface(abc.ABC):
         #grid = np.concatenate(self.ob_memory, axis=0)
 
         #return grid
-        return self.tetris_list[self.now_player]["tetris"].get_grid().reshape(GRID_DEPTH, GRID_WIDTH, 1)
-
+        #return self.tetris_list[self.now_player]["tetris"].get_grid().reshape(GRID_DEPTH, GRID_WIDTH, 1)
+        return self._get_seen_grid()
     def _get_diff_grid(self):
         grid_1 = self.tetris_list[self.now_player]["tetris"].get_diff_grid()
         return grid_1.flatten()
