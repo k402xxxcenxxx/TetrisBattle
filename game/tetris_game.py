@@ -7,8 +7,10 @@ import time as t
 from TetrisBattle.renderer import Renderer
 from TetrisBattle.sound_manager import SoundManager
 
-from TetrisBattle.tetris import Tetris, Player, Judge, collideDown, collide, collideLeft, collideRight, \
-    hardDrop, freeze, get_infos
+from TetrisBattle.tetris import Tetris, Player, freeze
+
+from TetrisBattle.tetris_core import collideDown, collide, collideLeft, collideRight, \
+    hardDrop, get_infos, Judge
 
 POS_LIST = [
     {
@@ -320,10 +322,10 @@ class TetrisGameDouble(TetrisGame):
         winner = 0
         force_quit = 0
 
-        self.renderer.drawGameScreen(None)
-        pygame.display.flip()
+        # self.renderer.drawGameScreen(None)
+        # pygame.display.flip()
 
-        self.countdown()
+        # self.countdown()
 
         #main loop
         while running:
