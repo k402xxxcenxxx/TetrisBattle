@@ -59,7 +59,7 @@ env = make_vec_env(TetrisSingleEnv, n_envs=1, env_kwargs={"gridchoice": "none", 
 # Create the callback: check every 1000 steps
 callback = SaveOnBestTrainingRewardCallback(check_freq=30000, log_dir=log_dir)
 # Train the agent
-time_steps = 1e9
+time_steps = 1e8
 model = DQN(MlpPolicy, env, verbose=1, tensorboard_log="./dqn_%s_tensorboard/" % CASE_NAME)
 
 load_steps = 0
