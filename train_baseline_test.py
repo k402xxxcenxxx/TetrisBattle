@@ -13,9 +13,9 @@ def get_var_from_env(name, default=""):
     return os.getenv(name) if os.getenv(name) != None else default
 
 CASE_NAME = get_var_from_env("CASE_NAME", "ppo2_tetris_test")
-TRAIN_STEPS = int(get_var_from_env("TRAIN_STEPS", 1e5))
-TEST_STEPS = int(get_var_from_env("TEST_STEPS", 1e3))
-VERBOSE = int(get_var_from_env("VERBOSE", 0))
+TRAIN_STEPS = int(get_var_from_env("TRAIN_STEPS", "1e5"))
+TEST_STEPS = int(get_var_from_env("TEST_STEPS", "1e3"))
+VERBOSE = int(get_var_from_env("VERBOSE", "1"))
 TENSORBOARD_LOG_PATH = get_var_from_env("TENSORBOARD_LOG_PATH", "./tensorboard/ppo2_tetris_test")
 GRIDCHOICE = get_var_from_env("GRIDCHOICE", "none")
 
