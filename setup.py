@@ -7,7 +7,11 @@ setup(
     packages=['TetrisBattle'],
     python_requires=">=3.6",
     install_requires=[
-        'pygame>=1.9.4'
+        'pygame>=1.9.4',
+        'numpy',
+        'gym',
+        'stable-baselines',
+        'tensorflow~=1.15.0'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

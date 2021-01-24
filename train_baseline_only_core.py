@@ -57,7 +57,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
 log_dir = "tmp/"
 os.makedirs(log_dir, exist_ok=True)
 
-env = make_vec_env(TetrisSingleEnv, n_envs=256, env_kwargs={"gridchoice": "none", "obs_type": "grid", "mode": "rgb_array"})
+env = make_vec_env(TetrisSingleEnv, n_envs=8, env_kwargs={"gridchoice": "none", "obs_type": "grid", "mode": "rgb_array"})
 
 # Create the callback: check every 1000 steps
 callback = SaveOnBestTrainingRewardCallback(check_freq=10000, log_dir=log_dir)

@@ -11,21 +11,22 @@ import numpy as np
 import time
 import os
 
+# load env var
+def get_var_from_env(name, default=""):
+    return os.getenv(name) if os.getenv(name) != None else default
+
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0" #(or "1" or "2")
+
+CASE_NAME = get_var_from_env("CASE_NAME", "ppo2_tetris_test")
+GRIDCHOICE = get_var_from_env("GRIDCHOICE", "none")
 
 np.set_printoptions(edgeitems=30, linewidth=20000, 
     formatter=dict(float=lambda x: "%3.1g" % x))
 
-env = make_vec_env(TetrisSingleEnv, n_envs=1, env_kwargs={"gridchoice": "none", "obs_type": "grid", "mode": "rgb_array"})
+env = TetrisSingleEnv(gridchoice=GRIDCHOICE, obs_type="grid", mode="rgb_array")
 
-model = PPO2(MlpPolicy, env, verbose=1)
-
-with open('./tmp/tetris_only_core_with_suggestion/830000.pkl', 'rb') as outfile:
-    params = pickle.load(outfile)
-    # print(params)
-
-    model.load_parameters(params)
+model = PPO2.load(CASE_NAME)
 
 action_meaning = {
     0: "NOOP",
@@ -45,10 +46,10 @@ while True:
     
     # print(np.array(obs[0][360:]).reshape(-1, 18)[:20, :10])
 
-    print(action_meaning[action[0]])
+    print(action_meaning[action])
     time.sleep(1/60 * 10)
     
-    if dones[0]:
+    if dones:
         print("///")
         print("///")
         print("///")
@@ -59,5 +60,6 @@ while True:
         time.sleep(5)
         env.reset()
     else:
-        print(np.array(obs[0][360:]).reshape(-1, 18))
-    # env.render()
+        print(np.array(obs).reshape(-1, 18))
+    
+    env.render()

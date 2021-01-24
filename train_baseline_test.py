@@ -13,16 +13,18 @@ def get_var_from_env(name, default=""):
     return os.getenv(name) if os.getenv(name) != None else default
 
 CASE_NAME = get_var_from_env("CASE_NAME", "ppo2_tetris_test")
-TRAIN_STEPS = int(get_var_from_env("TRAIN_STEPS", "1e5"))
-TEST_STEPS = int(get_var_from_env("TEST_STEPS", "1e3"))
+TRAIN_STEPS = int(float(get_var_from_env("TRAIN_STEPS", "1e5")))
+TEST_STEPS = int(float(get_var_from_env("TEST_STEPS", "1e3")))
 VERBOSE = int(get_var_from_env("VERBOSE", "1"))
 TENSORBOARD_LOG_PATH = get_var_from_env("TENSORBOARD_LOG_PATH", "./tensorboard/ppo2_tetris_test")
 GRIDCHOICE = get_var_from_env("GRIDCHOICE", "none")
 
-env = TetrisSingleEnv(gridchoice=GRIDCHOICE, obs_type="grid", mode="rgb_array")
+os.makedirs(TENSORBOARD_LOG_PATH, exist_ok=True)
+
+env = make_vec_env(TetrisSingleEnv, n_envs=1, env_kwargs={"gridchoice": GRIDCHOICE, "obs_type": "grid", "mode": "rgb_array"})
 
 # Train the agent
-model = PPO2(MlpPolicy, env, verbose=VERBOSE, nminibatches=4, tensorboard_log=TENSORBOARD_LOG_PATH)
+model = PPO2(MlpPolicy, env, verbose=1, nminibatches=4, tensorboard_log=TENSORBOARD_LOG_PATH)
 
 model.learn(total_timesteps=TRAIN_STEPS)
 model.save(CASE_NAME)
@@ -30,6 +32,7 @@ model.save(CASE_NAME)
 del model # remove to demonstrate saving and loading
 
 # Test
+env = TetrisSingleEnv(gridchoice=GRIDCHOICE, obs_type="grid", mode="rgb_array")
 model = PPO2.load(CASE_NAME)
 obs = env.reset()
 
