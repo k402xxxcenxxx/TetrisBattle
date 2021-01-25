@@ -8,6 +8,7 @@ from TetrisBattle.renderer import Renderer
 from TetrisBattle.sound_manager import SoundManager
 
 from TetrisBattle.tetris import Tetris, Player, freeze
+from TetrisBattle.tetris_ai import TetrisAI
 
 from TetrisBattle.tetris_core import collideDown, collide, collideLeft, collideRight, \
     hardDrop, get_infos, Judge
@@ -595,6 +596,192 @@ class TetrisGameSingle(TetrisGame):
         # pygame.quit()
         return "menu"
 
+class TetrisGameAI(TetrisGame):
+    
+    def __init__(self):
+        super(TetrisGameAI, self).__init__()
+        self.num_players = 2
+        self.ai = TetrisAI()
+        self.ai_id = 1
+
+    def start(self):#parameters are FP/s rate and timer countdown
+    ################################################################################
+
+        gridchoice = self.setmap()#calling the setmap function for a choice of grid
+        self.timer2p.tick()
+        #the code below is what happens when you set a map
+        #different maps = differnet grids
+
+        self.game_init()
+
+        #SCREEN=pygame.display.set_mode((800,600))
+        running = True #necessity
+        # SCREEN.blit(IMAGES["gamescreen"], (0, 0))# blitting the main background
+        self.renderer.drawByName("gamescreen", 0, 0)
+
+        #these two used for countdown
+        #of the timer
+        time = MAX_TIME   # milisecond
+        delaytime = time
+
+        info_dict_list = [
+            {
+            "id": 0,
+            "hold": pygame.K_c,
+            "drop": pygame.K_SPACE,
+            "rotate_right": pygame.K_UP,
+            "rotate_left": pygame.K_z,
+            "right": pygame.K_RIGHT,
+            "left": pygame.K_LEFT,
+            "down": pygame.K_DOWN
+            },
+            {
+            "id": self.ai_id,
+            "hold": 1,
+            "drop": 2,
+            "rotate_right": 3,
+            "rotate_left": 4,
+            "right": 5,
+            "left": 6,
+            "down": 7
+            }
+        ]
+
+        tetris_list = []
+
+        for i in range(self.num_players):
+            tetris_list.append({
+                'info_dict': info_dict_list[i],
+                'tetris': Tetris(Player(info_dict_list[i]), gridchoice),
+                'pos': POS_LIST[i]
+            })
+            
+        self.ai.set_env(tetris_list[self.ai_id]["tetris"])
+
+        winner = 0
+        force_quit = 0
+
+#         self.countdown()
+
+        #main loop
+        while running:
+            self.sound_manager.bgm_loop(True)
+
+            for tetris_dict in tetris_list:
+                tetris_dict["tetris"].natural_down()
+
+            for evt in pygame.event.get():
+                if evt.type == pygame.QUIT:
+                    running = False
+                    force_quit = 1
+
+                for tetris_dict in tetris_list:
+                    tetris_dict["tetris"].trigger(evt)
+
+            for tetris_dict in tetris_list:
+                tetris_dict["tetris"].move()
+
+            # simulate ai move
+            ai_event = pygame.event.Event(pygame.KEYDOWN)
+            ai_event.key = self.ai.predict(time)
+            tetris_list[self.ai_id]["tetris"].trigger(ai_event)
+
+            for i, tetris_dict in enumerate(tetris_list):
+                opponent = tetris_list[self.num_players - 1 - i]
+                tetris, pos = tetris_dict["tetris"], tetris_dict["pos"]
+
+                if tetris.check_fallen():
+                    # compute the scores and attack the opponent
+                    scores = tetris.clear()
+
+                    opponent["tetris"].add_attacked(scores)
+
+                    self.renderer.drawCombo(tetris, *pos["combo"])
+
+                    self.renderer.drawTetris(tetris, *pos["tetris"])
+                    self.renderer.drawTspin(tetris, *pos["tspin"])
+                    self.renderer.drawBack2Back(tetris, *pos["back2back"])
+
+                    if tetris.check_KO():
+
+                        self.renderer.drawBoard(tetris, *pos["board"])
+
+                        opponent["tetris"].update_ko()
+
+                        tetris.clear_garbage()
+
+                        self.renderer.drawByName("ko", *pos["ko"])
+                        self.renderer.drawByName("transparent", *pos["transparent"])
+
+                        # screen.blit(kos[tetris_2.get_KO() - 1], (426, 235))
+                        pygame.display.flip()
+                        freeze(0.5)
+                        # scores -= 1
+
+                        # end = 1
+
+                    tetris.new_block()
+
+                self.renderer.drawGameScreen(tetris)
+
+                tetris.increment_timer()
+
+                if tetris.attacked == 0:
+                    pygame.draw.rect(self.screen, (30, 30, 30), pos["attack_clean"])
+
+                if tetris.attacked != 0:
+
+                    for j in range(tetris.attacked):
+                        pos_attack_alarm = list(pos["attack_alarm"])
+                        # modified the y axis of the rectangle, according to the strength of attack
+                        pos_attack_alarm[1] = pos_attack_alarm[1] - 18 * j
+                        pygame.draw.rect(self.screen, (255, 0, 0), pos_attack_alarm)
+
+                if tetris.KO > 0:
+                    self.renderer.drawKO(tetris.KO, *pos["big_ko"])
+
+                self.renderer.drawScreen(tetris, *pos["drawscreen"])
+
+                if Judge.check_ko_win(tetris, max_ko=3):
+                    running = False
+                    winner = tetris.get_id()
+
+                if Judge.check_ko_win(opponent["tetris"], max_ko=3):
+                    running = False
+                    winner = opponent["tetris"].get_id()
+
+                time, running = self.update_time(time, running)
+
+                if not running:
+                    winner = Judge.who_win(tetris, opponent["tetris"])
+
+            self.renderer.drawTime2p(time)
+
+            self.myClock.tick(FPS)
+            pygame.display.flip()
+
+        if force_quit:
+            self.sound_manager.bgm_loop(False)
+            return "menu"
+
+
+        for i, tetris_dict in enumerate(tetris_list):
+            opponent = tetris_list[self.num_players - 1 - i]
+            tetris, pos = tetris_dict["tetris"], tetris_dict["pos"]
+            self.renderer.drawByName("transparent", *pos["transparent"])
+            if i == winner: # is winner
+                self.renderer.drawByName("you_win", *pos["you_win"])
+            else:
+                self.renderer.drawByName("you_lose", *pos["you_lose"])
+
+        pygame.display.flip()
+
+        freeze(2.0)
+
+        self.sound_manager.bgm_loop(False)
+
+        return "menu"
+
 def parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["single", "double"], default="single")
@@ -604,7 +791,8 @@ def parser():
 if __name__ == "__main__":
     args = parser()
     if args.mode == "single":
-        game = TetrisGameSingle()
+        # game = TetrisGameSingle()
+        game = TetrisGameAI()
     else:
         game = TetrisGameDouble()
     game.play()

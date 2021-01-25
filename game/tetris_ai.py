@@ -1,24 +1,25 @@
-from ..TetrisBattle.envs.tetris_env import TetrisSingleEnv
-
+from .envs.tetris_env import TetrisSingleEnv
+import random
 
 class TetrisAI():
-    def __init__(self, gridchoice):
+    def __init__(self, gridchoice="none", obs_type="image", mode="rgb_array"):
+        self.env = TetrisSingleEnv(gridchoice, obs_type, mode)
+        self.action_meaning = {
+            0: "NOOP",
+            1: "hold",
+            2: "drop",
+            3: "rotate_right",
+            4: "rotate_left",
+            5: "right",
+            6: "left",
+            7: "down"
+        }
+        self.n_actions = len(self.action_meaning)
+        self.model = None
 
-        self.env = TetrisSingleEnv(gridchoice="none", obs_type="grid", mode="rgb_array")
+    def predict(self, obs=None):
+        if self.model is None or obs is None:
+            return self.env.random_action
 
-    ob = env.reset()
-
-    for i in range(200000):
-
-        env.take_turns() # take_turn() only work in double mode
-        action = env.random_action()
-
-        ob, reward, done, infos = env.step(action)
-
-        print(reward)
-
-        if len(infos) != 0:
-            print(infos)
-
-        if done:
-            ob = env.reset()
+        action, _states = model.predict(obs)
+        return action
