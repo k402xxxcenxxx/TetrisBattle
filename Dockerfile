@@ -1,8 +1,6 @@
 FROM stablebaselines/rl-baselines-zoo-cpu:v2.10.0
 
-WORKDIR /root
-
-RUN git clone https://github.com/k402xxxcenxxx/TetrisBattle.git
+COPY ./ /root/TetrisBattle 
 
 WORKDIR /root/TetrisBattle
 

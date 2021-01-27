@@ -40,7 +40,6 @@ t = 0
 while t < TEST_STEPS:
     action, _states = model.predict(obs)
     obs, rewards, dones, info = env.step(action)
-    env.render()
     t += 1
 
 print("SUCCESS")
