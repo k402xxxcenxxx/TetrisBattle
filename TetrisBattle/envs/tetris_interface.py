@@ -348,6 +348,24 @@ class TetrisSingleInterface(TetrisInterface):
         self.num_players = 1
         self.mode = mode
 
+        # load env var
+        def get_var_from_env(name, default=""):
+            return os.getenv(name) if os.getenv(name) != None else default
+
+        self.heuristic_ratio = get_var_from_env("HEURISTIC_RATIO", 1)
+        self.score_ratio = get_var_from_env("SCORE_RATIO", 0)
+        self.used_block_ratio = get_var_from_env("USED_BLOCK_RATIO", 0)
+        self.used_time_ratio = get_var_from_env("USED_TIME_RATIO", 0)
+        self.cleared_ratio = get_var_from_env("CLEARED_RATIO", 0)
+        self.holes_ratio = get_var_from_env("HOLES_RATIO", 0)
+        self.max_height_ratio = get_var_from_env("MAX_HEIGHT_RATIO", 0)
+        self.height_sum_ratio = get_var_from_env("HEIGHT_SUM_RATIO", 0)
+        self.diff_sum_ratio = get_var_from_env("DIFF_SUM_RATIO", 0)
+        self.hard_drop_bonus = get_var_from_env("HARD_DROP_BONUS", 0)
+
+        self.bad_end_early = get_var_from_env("BAD_END_EARLY", 1)
+        self.slow_end_early = get_var_from_env("SLOW_END_EARLY", 1)
+
         for i in range(self.num_players + 1):
             info_dict = {"id": i}
 
@@ -375,16 +393,15 @@ class TetrisSingleInterface(TetrisInterface):
 
     def reward_func(self, infos):
         if infos['is_fallen']:
-            # basic_reward = infos['n_used_block'] * 0.001 # + infos['scores']
-            # time_reward = 3 * max(0, min((2500 - infos['wait_time'])/2500, 1))
-            # additional_reward = 10 * infos['cleared']  
-            # panelty = 1.0 * infos['holes'] + 1.0 * infos['max_height'] + 1.0 * infos['height_sum'] + 1.0 * infos['diff_sum']
+            basic_reward = self.used_block_ratio * infos['n_used_block'] + self.score_ratio * infos['scores']
+            time_reward = self.used_time_ratio * max(0, min((2500 - infos['wait_time'])/2500, 1))
+            additional_reward = self.cleared_ratio * infos['cleared']  
+            panelty = self.holes_ratio * infos['holes'] + self.max_height_ratio * infos['max_height'] + self.height_sum_ratio * infos['height_sum'] + self.diff_sum_ratio * infos['diff_sum']
             
-            # hard_drop_bonus = 2 if infos['action'] == 2 else 1 
+            hard_drop_bonus = self.hard_drop_bonus if infos['action'] == 2 else 1 
 
-            # reward = hard_drop_bonus * (basic_reward + additional_reward - panelty + time_reward)
-            # return reward
-            return self.heuristic_reward(infos)
+            reward = hard_drop_bonus * (basic_reward + additional_reward - panelty + time_reward)
+            return self.heuristic_ratio * self.heuristic_reward(infos) + reward
         return 0.0
         #if infos['is_fallen']:
         #    basic_reward = infos['scores']
@@ -493,7 +510,7 @@ class TetrisSingleInterface(TetrisInterface):
             infos['max_height'] =  max_height - self.last_infos['max_height']
             infos['holes'] =  holes - self.last_infos['holes']
             infos['is_fallen'] =  self.is_fallen
-            # infos['scores'] =  scores
+            infos['scores'] =  scores
             infos['cleared'] =  self.cleared
             infos['penalty'] =  penalty_die
             infos['reward_notdie'] = reward_notdie
@@ -510,12 +527,12 @@ class TetrisSingleInterface(TetrisInterface):
             
             self.last_fallen_time = self.time
 
-            # if holes > 2:
-            #     # print("Too bad, end early!")
-            #     end = 1
+            if holes > 2 and self.bad_end_early:
+                # print("Too bad, end early!")
+                end = 1
 
-        # if self.last_fallen_time - self.time > 2500:
-            # end = 1
+        if self.last_fallen_time - self.time > 2500 and self.slow_end_early:
+            end = 1
             # print("Too slow, end early!")
             # print(infos)
 
