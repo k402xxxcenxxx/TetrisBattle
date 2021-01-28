@@ -352,19 +352,19 @@ class TetrisSingleInterface(TetrisInterface):
         def get_var_from_env(name, default=""):
             return os.getenv(name) if os.getenv(name) != None else default
 
-        self.heuristic_ratio = get_var_from_env("HEURISTIC_RATIO", 1)
-        self.score_ratio = get_var_from_env("SCORE_RATIO", 0)
-        self.used_block_ratio = get_var_from_env("USED_BLOCK_RATIO", 0)
-        self.used_time_ratio = get_var_from_env("USED_TIME_RATIO", 0)
-        self.cleared_ratio = get_var_from_env("CLEARED_RATIO", 0)
-        self.holes_ratio = get_var_from_env("HOLES_RATIO", 0)
-        self.max_height_ratio = get_var_from_env("MAX_HEIGHT_RATIO", 0)
-        self.height_sum_ratio = get_var_from_env("HEIGHT_SUM_RATIO", 0)
-        self.diff_sum_ratio = get_var_from_env("DIFF_SUM_RATIO", 0)
-        self.hard_drop_bonus = get_var_from_env("HARD_DROP_BONUS", 0)
+        self.heuristic_ratio = float(get_var_from_env("HEURISTIC_RATIO", 1))
+        self.score_ratio = float(get_var_from_env("SCORE_RATIO", 0))
+        self.used_block_ratio = float(get_var_from_env("USED_BLOCK_RATIO", 0))
+        self.used_time_ratio = float(get_var_from_env("USED_TIME_RATIO", 0))
+        self.cleared_ratio = float(get_var_from_env("CLEARED_RATIO", 0))
+        self.holes_ratio = float(get_var_from_env("HOLES_RATIO", 0))
+        self.max_height_ratio = float(get_var_from_env("MAX_HEIGHT_RATIO", 0))
+        self.height_sum_ratio = float(get_var_from_env("HEIGHT_SUM_RATIO", 0))
+        self.diff_sum_ratio = float(get_var_from_env("DIFF_SUM_RATIO", 0))
+        self.hard_drop_bonus = float(get_var_from_env("HARD_DROP_BONUS", 1))
 
-        self.bad_end_early = get_var_from_env("BAD_END_EARLY", 1)
-        self.slow_end_early = get_var_from_env("SLOW_END_EARLY", 1)
+        self.bad_end_early = int(get_var_from_env("BAD_END_EARLY", 1))
+        self.slow_end_early = int(get_var_from_env("SLOW_END_EARLY", 1))
 
         for i in range(self.num_players + 1):
             info_dict = {"id": i}

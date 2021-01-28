@@ -16,7 +16,8 @@ CASE_NAME = get_var_from_env("CASE_NAME", "ppo2_tetris_test")
 TRAIN_STEPS = int(float(get_var_from_env("TRAIN_STEPS", "1e5")))
 TEST_STEPS = int(float(get_var_from_env("TEST_STEPS", "1e3")))
 VERBOSE = int(get_var_from_env("VERBOSE", "1"))
-TENSORBOARD_LOG_PATH = get_var_from_env("TENSORBOARD_LOG_PATH", "./tensorboard/ppo2_tetris_test")
+TENSORBOARD_LOG_PATH = get_var_from_env("TENSORBOARD_LOG_PATH", "./tensorboard/" + CASE_NAME)
+MODEL_OUTPUT_PATH = get_var_from_env("MODEL_OUTPUT_PATH", "/out/ppo2_tetris_test")
 GRIDCHOICE = get_var_from_env("GRIDCHOICE", "none")
 
 os.makedirs(TENSORBOARD_LOG_PATH, exist_ok=True)
@@ -27,13 +28,13 @@ env = make_vec_env(TetrisSingleEnv, n_envs=1, env_kwargs={"gridchoice": GRIDCHOI
 model = PPO2(MlpPolicy, env, verbose=1, nminibatches=4, tensorboard_log=TENSORBOARD_LOG_PATH)
 
 model.learn(total_timesteps=TRAIN_STEPS)
-model.save(CASE_NAME)
+model.save(MODEL_OUTPUT_PATH)
 
 del model # remove to demonstrate saving and loading
 
 # Test
 env = TetrisSingleEnv(gridchoice=GRIDCHOICE, obs_type="grid", mode="rgb_array")
-model = PPO2.load(CASE_NAME)
+model = PPO2.load(MODEL_OUTPUT_PATH)
 obs = env.reset()
 
 t = 0
