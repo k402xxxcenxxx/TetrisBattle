@@ -1,4 +1,4 @@
-FROM stablebaselines/rl-baselines-zoo-cpu:v2.10.0
+FROM stablebaselines/stable-baselines
 
 COPY ./ /root/TetrisBattle 
 
