@@ -1,10 +1,12 @@
-from .settings import *
+from .settings import (BLOCK_LENGTH, BLOCK_WIDTH, GRID_WIDTH, GRID_DEPTH,
+    MAX_COMBO, PIECE_NUM2TYPE,
+    BACK2BACK_FREQ, COMBO_COUNT_FREQ, TETRIS_FREQ, TSPIN_FREQ)
 from .tetris_core import collideDown, hardDrop
 import time as t
 import pygame
 import math
 
-class Renderer(object):
+class Renderer():
 
     def __init__(self, screen, images):
         self.screen = screen
@@ -15,7 +17,8 @@ class Renderer(object):
 
         combos = self.images["combos"]
         if tetris.combo > 0:
-            r = self.screen.blit(combos[min(tetris.combo, MAX_COMBO) - 1], (sx, sy)) #blits the combo number
+            # blits the combo number
+            r = self.screen.blit(combos[min(tetris.combo, MAX_COMBO) - 1], (sx, sy))
 
             pygame.display.update(r)
 
@@ -23,9 +26,7 @@ class Renderer(object):
 
             return True
 
-        else:
-            tetris.oldcombo = 0
-
+        tetris.oldcombo = 0
         tetris.combo_counter = 0
 
         return False
@@ -72,7 +73,7 @@ class Renderer(object):
         return False
 
     def drawGameScreen(self, tetris):
-        if tetris == None:
+        if tetris is None:
             self.screen.blit(self.images["gamescreen"], (0, 0))
             return
 
@@ -97,7 +98,7 @@ class Renderer(object):
     def drawScreen(self, tetris_1, sx, sy):
         self.drawHeld(tetris_1, sx - 56, sy + 23)  # draws held piece for grid1
         self.drawNext(tetris_1, sx + 206, sy + 23) # draws next piece for grid1
-        self.drawNumbers(tetris_1, sx - 56, sy + 239) # draws the linessent on the self.screen for grid1
+        self.drawNumbers(tetris_1, sx - 56, sy + 239) # draws the linessent for grid1
 
         #this code blits the background grid for grid1
         excess = len(tetris_1.grid[0]) - GRID_DEPTH
@@ -106,13 +107,15 @@ class Renderer(object):
             for y in range(excess, len(tetris_1.grid[0])):
                 if tetris_1.grid[x][y] == 0:
                     if (x + y) % 2 == 0:
-                        self.screen.blit(self.images["dgrey"], (sx + x * 18, sy + (y - excess) * 18))
+                        self.screen.blit(self.images["dgrey"],
+                            (sx + x * 18, sy + (y - excess) * 18))
                     elif (x + y) % 2 == 1:
-                        self.screen.blit(self.images["lgrey"], (sx + x * 18, sy + (y - excess) * 18))
+                        self.screen.blit(self.images["lgrey"],
+                            (sx + x * 18, sy + (y - excess) * 18))
 
         #drawing the ghost peices as long as there are no
         #pieces under the block ie collidedown==False
-        if collideDown(tetris_1.grid, tetris_1.block, tetris_1.px, tetris_1.py) == False:
+        if not collideDown(tetris_1.grid, tetris_1.block, tetris_1.px, tetris_1.py):
             self.drawGhostPiece(tetris_1, sx, sy)
 
         #drawing the pieces
@@ -125,8 +128,8 @@ class Renderer(object):
     # by hitting the respective hold button
 
     def drawHeld(self, tetris, sx, sy):
-        grid, held = tetris.grid, tetris.held
-        if held != None:
+        held = tetris.held
+        if held is not None:
             # num = allpieces.index(held)
             _type = held.block_type()
             pos = []
@@ -139,15 +142,21 @@ class Renderer(object):
 
 
             if _type == 'I':
-                for i in range(len(pos)):#if its an o piece different x and y position
-                    self.screen.blit(self.images["resizepics"][_type], (sx - 5 + int(pos[i][0] * 12), sy - 6 + int(pos[i][1] * 12)))
+                for i in range(len(pos)):
+                    # if its an o piece different x and y position
+                    self.screen.blit(self.images["resizepics"][_type],
+                        (sx - 5 + int(pos[i][0] * 12), sy - 6 + int(pos[i][1] * 12)))
             elif _type == 'O':
-                for i in range(len(pos)):#any other piece id the same x and y position
-                    self.screen.blit(self.images["resizepics"][_type], (sx - 5 + int(pos[i][0] * 12), sy + int(pos[i][1] * 12)))
+                for i in range(len(pos)):
+                    # any other piece id the same x and y position
+                    self.screen.blit(self.images["resizepics"][_type],
+                        (sx - 5 + int(pos[i][0] * 12), sy + int(pos[i][1] * 12)))
 
             else:
-                for i in range(len(pos)):#if its an i piece different x and y position
-                    self.screen.blit(self.images["resizepics"][_type], (sx + int(pos[i][0] * 12), sy + int(pos[i][1] * 12)))
+                for i in range(len(pos)):
+                    # if its an i piece different x and y position
+                    self.screen.blit(self.images["resizepics"][_type],
+                        (sx + int(pos[i][0] * 12), sy + int(pos[i][1] * 12)))
 
     # drawing the next pieces
     def drawNext(self, tetris, sx, sy):
@@ -165,37 +174,46 @@ class Renderer(object):
                 self.screen.blit(self.images["holdback"], (sx - 1, 159))
                 if _type == 'I': # i piece is different x and y pos
                     for i in range(len(pos)):
-                        self.screen.blit(self.images["resizepics"][_type], (sx + 1 + int(pos[i][0] * 12), 156 + int(pos[i][1] * 12)))
+                        self.screen.blit(self.images["resizepics"][_type],
+                            (sx + 1 + int(pos[i][0] * 12), 156 + int(pos[i][1] * 12)))
                 elif _type == 'O': # o piece is different x and y pos
                     for i in range(len(pos)):
-                        self.screen.blit(self.images["resizepics"][_type], (sx + 1 + int(pos[i][0] * 12), 158 + int(pos[i][1] * 12)))
+                        self.screen.blit(self.images["resizepics"][_type],
+                            (sx + 1 + int(pos[i][0] * 12), 158 + int(pos[i][1] * 12)))
                 else: # every other piece is the same x and y pos
                     for i in range(len(pos)):
-                        self.screen.blit(self.images["resizepics"][_type], (sx + 7 + int(pos[i][0] * 12), 159 + int(pos[i][1] * 12)))
+                        self.screen.blit(self.images["resizepics"][_type],
+                            (sx + 7 + int(pos[i][0] * 12), 159 + int(pos[i][1] * 12)))
 
             if i == 1: # position 2
                 self.screen.blit(self.images["nextback2"], (sx + 2, 230))
                 if _type == 'I': # i piece is differnet x and y pos
                     for i in range(len(pos)):
-                        self.screen.blit(self.images["nextpics"][_type], (sx + 9 + int(pos[i][0] * 8), 235 + int(pos[i][1] * 8)))
+                        self.screen.blit(self.images["nextpics"][_type],
+                            (sx + 9 + int(pos[i][0] * 8), 235 + int(pos[i][1] * 8)))
                 elif _type == 'O': # o piece is differnt x and y pos
                     for i in range(len(pos)):
-                        self.screen.blit(self.images["nextpics"][_type], (sx + 10 + int(pos[i][0] * 8), 235 + int(pos[i][1] * 8)))
+                        self.screen.blit(self.images["nextpics"][_type],
+                            (sx + 10 + int(pos[i][0] * 8), 235 + int(pos[i][1] * 8)))
                 else: # every other piece same x and y pos
                     for i in range(len(pos)):
-                        self.screen.blit(self.images["nextpics"][_type], (sx + 13 + int(pos[i][0] * 8), 235 + int(pos[i][1] * 8)))
+                        self.screen.blit(self.images["nextpics"][_type],
+                            (sx + 13 + int(pos[i][0] * 8), 235 + int(pos[i][1] * 8)))
 
             if i >= 2: # position 3, 4, 5
                 self.screen.blit(self.images["nextback3"], (sx + 4, 288 + 52 * (i - 2)))
                 if _type == 'I': # same as above
                     for j in range(len(pos)):
-                        self.screen.blit(self.images["nextpics"][_type], (sx + 9 + int(pos[j][0] * 8), 288 + (i - 2) * 51 + int(pos[j][1] * 8)))
+                        self.screen.blit(self.images["nextpics"][_type],
+                            (sx + 9 + int(pos[j][0] * 8), 288 + (i - 2) * 51 + int(pos[j][1] * 8)))
                 elif _type == 'O': # same as above
                     for j in range(len(pos)):
-                        self.screen.blit(self.images["nextpics"][_type], (sx + 9 + int(pos[j][0] * 8), 292 + (i - 2) * 51 + int(pos[j][1] * 8)))
+                        self.screen.blit(self.images["nextpics"][_type],
+                            (sx + 9 + int(pos[j][0] * 8), 292 + (i - 2) * 51 + int(pos[j][1] * 8)))
                 else: # same as above
                     for j in range(len(pos)):
-                        self.screen.blit(self.images["nextpics"][_type], (sx + 12 + int(pos[j][0] * 8), 292 + (i - 2) * 51 + int(pos[j][1] * 8)))
+                        self.screen.blit(self.images["nextpics"][_type],
+                            (sx + 12 + int(pos[j][0] * 8), 292 + (i - 2) * 51 + int(pos[j][1] * 8)))
 
     #draws the ghost piece at where harddrop will take place
     #ghost goes where block will be when you harddrop
@@ -217,7 +235,7 @@ class Renderer(object):
         number_digits = []
 
         sent = int(sent)
-        while sent != 0:
+        while sent is not 0:
             number_digits.append(sent % 10)
             sent /= 10
             sent = int(sent)
@@ -235,7 +253,8 @@ class Renderer(object):
         elif len(number_digits) == 2:
 
             if number_digits[1] == 1:
-                # blitting the self.images["numbers"] at the poisition in self.images["numbers"] list
+                # blitting the self.images["numbers"]
+                # at the poisition in self.images["numbers"] list
                 self.screen.blit(self.images["numbers"][number_digits[1]], (sx - 14, sy))
                 self.screen.blit(self.images["numbers"][number_digits[0]], (sx + 7, sy))
             else:
@@ -269,7 +288,8 @@ class Renderer(object):
                         self.drawBlock(sx, sy, px + x, py + y - excess, b[x][y])
 
     # drawing the blocks on the grid
-    # calls the drawblock function so that different self.images["numbers"] draw different colours on the self.screen
+    # calls the drawblock function so that different self.images["numbers"]
+    # draw different colours on the self.screen
     def drawBoard(self, tetris, sx, sy):
         grid = tetris.grid
         excess = len(grid[0]) - GRID_DEPTH
@@ -309,7 +329,8 @@ class Renderer(object):
     # different self.images["numbers"](vals) draws differnt colour blocks on the self.screen
     def drawBlock(self, sx, sy, x, y, val):
         # self.images["pics"] = [ipiece, opiece, jpiece, lpiece, zpiece, spiece, tpiece, lspiece]
-        self.screen.blit(self.images["piecepics"][PIECE_NUM2TYPE[math.floor(val)]], (sx + x * 18, sy + y * 18))
+        self.screen.blit(self.images["piecepics"][PIECE_NUM2TYPE[math.floor(val)]],
+            (sx + x * 18, sy + y * 18))
 
     def drawByName(self, name, sx, sy):
         self.screen.blit(self.images[name], (sx, sy))

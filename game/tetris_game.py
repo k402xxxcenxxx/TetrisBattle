@@ -342,7 +342,7 @@ class TetrisGameDouble(TetrisGame):
                     force_quit = 1
 
                 for tetris_dict in tetris_list:
-                   tetris_dict["tetris"].trigger(evt)
+                    tetris_dict["tetris"].trigger(evt)
 
             for tetris_dict in tetris_list:
                 tetris_dict["tetris"].move()
@@ -467,7 +467,7 @@ class TetrisGameSingle(TetrisGame):
                            'max_height': 0,
                            'holes': 0,
                            'n_used_block': 0}
-                    
+
         self.mode = "single"
 
     def start(self):#parameters are FP/s rate and timer countdown
@@ -600,7 +600,7 @@ class TetrisGameSingle(TetrisGame):
         return "menu"
 
 class TetrisGameAI(TetrisGame):
-    
+
     def __init__(self):
         super(TetrisGameAI, self).__init__()
         self.num_players = 2
@@ -658,7 +658,7 @@ class TetrisGameAI(TetrisGame):
                 'tetris': Tetris(Player(info_dict_list[i]), gridchoice),
                 'pos': POS_LIST[i]
             })
-            
+
         self.ai.set_env(tetris_list[self.ai_id]["tetris"])
 
         winner = 0
@@ -786,7 +786,7 @@ class TetrisGameAI(TetrisGame):
         return "menu"
 
 class TetrisGameAuto(TetrisGame):
-    
+
     def __init__(self):
         super(TetrisGameAuto, self).__init__()
         self.num_players = 1
@@ -844,7 +844,7 @@ class TetrisGameAuto(TetrisGame):
                 'tetris': Tetris(Player(info_dict_list[i]), gridchoice),
                 'pos': POS_LIST[i]
             })
-            
+
         self.ai.set_env(tetris_list[self.ai_id]["tetris"])
 
         winner = 0
