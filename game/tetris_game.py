@@ -13,6 +13,37 @@ from TetrisBattle.tetris_ai import TetrisAI
 from TetrisBattle.tetris_core import collideDown, collide, collideLeft, collideRight, \
     hardDrop, get_infos, Judge
 
+import subprocess
+import cv2
+import numpy as np
+
+YOUTUBE_URL="rtmp://a.rtmp.youtube.com/live2"  # URL
+KEY=""
+rtmp_url = YOUTUBE_URL + '/' + KEY
+VBR="2500k" # Bitrate
+command = ['ffmpeg',
+           '-y',
+           '-f', 'rawvideo',
+           '-vcodec', 'rawvideo',
+           '-pix_fmt', 'rgb24',
+           '-s', "{}x{}".format(SCREENWIDTH, SCREENHEIGHT),
+           '-r', str(FPS),
+           '-i', '-',
+           '-f', 'lavfi',
+           '-i', 'anullsrc',
+           '-b:v', VBR,
+           '-deinterlace',
+           '-c:v', 'libx264',
+           '-pix_fmt', 'yuv420p',
+           '-preset', 'ultrafast',
+           '-threads', '6',
+           '-qscale', '3',
+           '-bufsize', '512k',
+           '-f', 'flv',
+           rtmp_url]
+
+p = subprocess.Popen(command, stdin=subprocess.PIPE)
+
 POS_LIST = [
     {
         'combo': (44, 437),
@@ -854,6 +885,10 @@ class TetrisGameAuto(TetrisGame):
 
         #main loop
         while running:
+
+            image = pygame.image.tostring(self.screen, "RGB", 0)
+            p.stdin.write(image)
+
             self.sound_manager.bgm_loop(True)
 
             for tetris_dict in tetris_list:
