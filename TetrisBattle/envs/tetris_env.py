@@ -12,7 +12,7 @@ from TetrisBattle.envs.tetris_interface import TetrisInterface, TetrisDoubleInte
 
 class TetrisEnv(gym.Env, abc.ABC):
     """Custom Environment that follows gym interface"""
-    metadata = {'render.modes': ['human', 'rgb_array'], 
+    metadata = {'render.modes': ['human', 'rgb_array'],
                 'obs_type': ['image', 'grid', 'diff_grid']}
 
     def __init__(self, interface, gridchoice="none", obs_type="image", mode="rgb_array"):
@@ -23,8 +23,8 @@ class TetrisEnv(gym.Env, abc.ABC):
 
         # Example when using discrete actions:
 
-        self.game_interface = interface(gridchoice=gridchoice, 
-                                        obs_type=obs_type, 
+        self.game_interface = interface(gridchoice=gridchoice,
+                                        obs_type=obs_type,
                                         mode=mode)
 
         self._n_actions = self.game_interface.n_actions
@@ -40,13 +40,13 @@ class TetrisEnv(gym.Env, abc.ABC):
         self.seed()
 
         if obs_type == "image":
-            self.observation_space = spaces.Box(low=0, high=255, 
+            self.observation_space = spaces.Box(low=0, high=255,
                 shape=self.game_interface.screen_size() + [3], dtype=np.uint8)
         elif obs_type == "grid":
-            self.observation_space = spaces.Box(low=0, high=1, 
+            self.observation_space = spaces.Box(low=0, high=1,
                 shape=list(self.game_interface.get_seen_grid().shape), dtype=np.float32)
         elif obs_type == "diff_grid":
-            self.observation_space = spaces.Box(low=0, high=1, 
+            self.observation_space = spaces.Box(low=0, high=1,
                 shape=list(self.game_interface.get_diff_grid().shape), dtype=np.float32)
 
         self.reset()
@@ -62,7 +62,7 @@ class TetrisEnv(gym.Env, abc.ABC):
 
     def take_turns(self):
         return self.game_interface.take_turns()
-        
+
     def reset(self):
 
         self.accum_rewards = 0
@@ -72,7 +72,7 @@ class TetrisEnv(gym.Env, abc.ABC):
         ob = self.game_interface.reset()
 
         return ob
-    
+
     def render(self, mode='human', close=False):
         return None
         # # Render the environment to the screen
@@ -91,7 +91,7 @@ class TetrisEnv(gym.Env, abc.ABC):
 
 class TetrisSingleEnv(TetrisEnv):
     """Custom Environment that follows gym interface"""
-    metadata = {'render.modes': ['human', 'rgb_array'], 
+    metadata = {'render.modes': ['human', 'rgb_array'],
                 'obs_type': ['image', 'grid']}
 
     def __init__(self, gridchoice="none", obs_type="image", mode="rgb_array"):
@@ -124,12 +124,12 @@ class TetrisSingleEnv(TetrisEnv):
 
 class TetrisDoubleEnv(TetrisEnv):
     """Custom Environment that follows gym interface"""
-    metadata = {'render.modes': ['human', 'rgb_array'], 
+    metadata = {'render.modes': ['human', 'rgb_array'],
                 'obs_type': ['image', 'grid']}
 
     def __init__(self, gridchoice="none", obs_type="image", mode="rgb_array"):
         super(TetrisDoubleEnv, self).__init__(TetrisDoubleInterface, gridchoice, obs_type, mode)
-  
+
     def step(self, action):
         # Execute one time step within the environment
 
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     env = TetrisSingleEnv(gridchoice="none", obs_type="grid", mode="human")
 
     ob = env.reset()
-    
+
     start = time.time()
 
     last = 0
@@ -176,7 +176,7 @@ if __name__ == "__main__":
         # print(reward)
         if len(infos) != 0:
             print(infos)
-        
+
         # im = Image.fromarray(ob)
         # im.save("samples/%d.png" % i)
         if done:

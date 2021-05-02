@@ -395,10 +395,10 @@ class TetrisSingleInterface(TetrisInterface):
         if infos['is_fallen']:
             basic_reward = self.used_block_ratio * infos['n_used_block'] + self.score_ratio * infos['scores']
             time_reward = self.used_time_ratio * max(0, min((2500 - infos['wait_time'])/2500, 1))
-            additional_reward = self.cleared_ratio * infos['cleared']  
+            additional_reward = self.cleared_ratio * infos['cleared']
             panelty = self.holes_ratio * infos['holes'] + self.max_height_ratio * infos['max_height'] + self.height_sum_ratio * infos['height_sum'] + self.diff_sum_ratio * infos['diff_sum']
-            
-            hard_drop_bonus = self.hard_drop_bonus if infos['action'] == 2 else 1 
+
+            hard_drop_bonus = self.hard_drop_bonus if infos['action'] == 2 else 1
 
             reward = hard_drop_bonus * (basic_reward + additional_reward - panelty + time_reward)
             return self.heuristic_ratio * self.heuristic_reward(infos) + reward
@@ -524,7 +524,7 @@ class TetrisSingleInterface(TetrisInterface):
                                'max_height': max_height,
                                'holes': holes,
                                }
-            
+
             self.last_fallen_time = self.time
 
             if holes > 2 and self.bad_end_early:

@@ -147,7 +147,7 @@ def load_imgs():
         os.path.join(ROOT, "assets/darkgreysquare.png")) # smae as above
     # sentpiece = pygame.image.load(ROOT + "assets/tetris blocks/linessent block.png")#dark block for garbage lines
     images_dict["ghost"] = pygame.image.load(
-        os.path.join(ROOT, "assets/tetris blocks/ghost block.png")) # ghost block 
+        os.path.join(ROOT, "assets/tetris blocks/ghost block.png")) # ghost block
     images_dict["decimal"] = pygame.image.load(
         os.path.join(ROOT, "assets/tetris numbers/decimal.png")) # for timer
     images_dict["ko"] = pygame.image.load(
@@ -193,13 +193,13 @@ def load_imgs():
         os.path.join(ROOT, "assets/tetris icons/you lose.png"))
 
     kos = [] #ko pictures
-    for i in range(1, 4):#putting kO pictures in the list 
+    for i in range(1, 4):#putting kO pictures in the list
         kos.append(pygame.image.load(
             os.path.join(ROOT, "assets/tetris icons/ko" + str(i) + ".png")))
 
     images_dict["kos"] = kos
 
-    numbers = []#imputing the numbers from 1 to 10 into list 
+    numbers = []#imputing the numbers from 1 to 10 into list
     for i in range(10): #to be used for timer and sent lines
         numbers.append(pygame.image.load(
             os.path.join(ROOT, "assets/tetris numbers/" + str(i) + ".png")))
@@ -214,7 +214,7 @@ def load_imgs():
     images_dict["combos"] = combos
 
     ipiece = pygame.image.load(
-        os.path.join(ROOT, "assets/tetris blocks/lightblue block.png")) 
+        os.path.join(ROOT, "assets/tetris blocks/lightblue block.png"))
     opiece = pygame.image.load(
         os.path.join(ROOT, "assets/tetris blocks/yellow block.png"))
     jpiece = pygame.image.load(
@@ -240,11 +240,11 @@ def load_imgs():
 
     images_dict["piecepics"] = piecepics
 
-    # resizepics = []#blocks will be resized for hold piece 
+    # resizepics = []#blocks will be resized for hold piece
     # for i in range(7):
     #     resizepics.append(transform.smoothscale(piecepics[i], (12, 12))) #12 x12 blocks
 
-    resizepics = {} # blocks will be resized for hold piece 
+    resizepics = {} # blocks will be resized for hold piece
 
     for key in list(piecepics.keys()):
         resizepics[key] = pygame.transform.smoothscale(piecepics[key], (12, 12)) # 12 x12 blocks

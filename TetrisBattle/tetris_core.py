@@ -609,7 +609,7 @@ class TetrisCore():
             hole_pos = []
             if chance_type == 'random':
                 candidate_pos = list(range(1, GRID_WIDTH))
-                
+
                 for i in range(holes):
                     hole_pos.append(candidate_pos.pop(random.randint(0, len(candidate_pos) - 1)))
                 # hole_pos = random.choice(range(1, GRID_WIDTH))

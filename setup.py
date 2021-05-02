@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='TetrisBattle',             
+    name='TetrisBattle',
     version='1.0',
     packages=['TetrisBattle'],
     python_requires=">=3.6",

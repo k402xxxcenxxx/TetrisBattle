@@ -279,7 +279,7 @@ class Tetris(object):
         # # hold block
         # if self.held != None:
         #     informations[len(PIECE_NUM2TYPE) - 1 + PIECE_TYPE2NUM[self.held.block_type()] - 1] = 1
-    
+
         # informations[len(PIECE_NUM2TYPE) - 1 + 0] = px
         # informations[len(PIECE_NUM2TYPE) - 1 + 1] = py
 
