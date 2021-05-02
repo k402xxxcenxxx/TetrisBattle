@@ -24,7 +24,7 @@ GRIDCHOICE = get_var_from_env("GRIDCHOICE", "none")
 np.set_printoptions(edgeitems=30, linewidth=20000, 
     formatter=dict(float=lambda x: "%3.1g" % x))
 
-env = TetrisSingleEnv(gridchoice=GRIDCHOICE, obs_type="grid", mode="rgb_array")
+env = TetrisSingleEnv(gridchoice=GRIDCHOICE, obs_type="grid", mode="human")
 
 model = PPO2.load(CASE_NAME)
 
